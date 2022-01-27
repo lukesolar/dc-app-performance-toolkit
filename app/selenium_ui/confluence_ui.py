@@ -10,6 +10,8 @@ def test_0_selenium_a_login(confluence_webdriver, confluence_datasets, confluenc
 def test_1_selenium_view_page(confluence_webdriver, confluence_datasets, confluence_screen_shots):
     modules.view_page(confluence_webdriver, confluence_datasets)
 
+def test_1_selenium_view_meetical_page(confluence_webdriver, confluence_datasets, confluence_screen_shots):
+    extension_ui.view_meetical_page(confluence_webdriver, confluence_datasets)
 
 def test_1_selenium_create_page(confluence_webdriver, confluence_datasets, confluence_screen_shots):
     modules.create_confluence_page(confluence_webdriver, confluence_datasets)
@@ -37,7 +39,7 @@ Write your custom selenium scripts in `app/extension/confluence/extension_ui.py`
 Refer to `app/selenium_ui/confluence/modules.py` for examples.
 """
 # def test_1_selenium_custom_action(confluence_webdriver, confluence_datasets, confluence_screen_shots):
-#     extension_ui.app_specific_action(confluence_webdriver, confluence_datasets)
+#      extension_ui.app_specific_action(confluence_webdriver, confluence_datasets)
 
 
 # this action should be the last one
