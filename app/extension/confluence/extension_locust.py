@@ -1,29 +1,50 @@
-import re
+import random
+
 from locustio.common_utils import init_logger, confluence_measure, run_as_specific_user  # noqa F401
+from locustio.confluence.requests_params import confluence_datasets
 
 logger = init_logger(app_type='confluence')
+confluence_dataset = confluence_datasets()
 
 
-@confluence_measure("locust_app_specific_action")
-# @run_as_specific_user(username='admin', password='admin')  # run as specific user
-def app_specific_action(locust):
-    r = locust.get('/app/get_endpoint', catch_response=True)  # call app-specific GET endpoint
-    content = r.content.decode('utf-8')   # decode response content
+@confluence_measure("locust_app_specific_get_template_list_action")
+def get_template_list(locust):
+    locust.get('/rest/meetical-api/1.0/template/list/TESTSPACE1', headers={
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest"
+    })  # call app-specific GET endpoint
 
-    token_pattern_example = '"token":"(.+?)"'
-    id_pattern_example = '"id":"(.+?)"'
-    token = re.findall(token_pattern_example, content)  # get TOKEN from response using regexp
-    id = re.findall(id_pattern_example, content)    # get ID from response using regexp
 
-    logger.locust_info(f'token: {token}, id: {id}')  # log info for debug when verbose is true in confluence.yml file
-    if 'assertion string' not in content:
-        logger.error(f"'assertion string' was not found in {content}")
-    assert 'assertion string' in content  # assert specific string in response content
+@confluence_measure("locust_app_specific_find_page_by_event_id_NOT_FOUND_action")
+def find_page_by_event_id_not_found(locust):
+    # try to find a page for event id event_id_invalid_{randomNr}
+    event_id = "event_id_not_existing_" + str(random.randint(1, 5))
+    with locust.get('/rest/api/content/search?cql=content.property[meetical].event.id%20IN%20("' + event_id + '")',
+                    headers={
+                        "Accept": "application/json, text/javascript, */*; q=0.01",
+                        "Accept-Language": "en-US,en;q=0.5",
+                        "Accept-Encoding": "gzip, deflate",
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }, catch_response=True) as response:
+        if response.status_code == 404:
+            response.success()
 
-    body = {"id": id, "token": token}  # include parsed variables to POST request body
-    headers = {'content-type': 'application/json'}
-    r = locust.post('/app/post_endpoint', body, headers, catch_response=True)  # call app-specific POST endpoint
-    content = r.content.decode('utf-8')
-    if 'assertion string after successful POST request' not in content:
-        logger.error(f"'assertion string after successful POST request' was not found in {content}")
-    assert 'assertion string after successful POST request' in content  # assertion after POST request
+
+@confluence_measure("locust_app_specific_find_page_by_event_id_FOUND_action")
+def find_page_by_event_id_found(locust):
+    # find page via event id for some random pages
+    page = confluence_dataset["custom_pages"][random.randint(1, 5)]
+    page_id = page[0]
+    locust.get(
+        '/rest/api/content/search?cql=content.property[meetical].event.id%20IN%20("event_id_for_page_' + page_id + '")',
+        headers={
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
+        })  # call app-specific GET endpoint
