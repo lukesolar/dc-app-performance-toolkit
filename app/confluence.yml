@@ -11,7 +11,7 @@ settings:
     application_postfix:            # e.g. /confluence in case of url like http://localhost:1990/confluence
     admin_login: admin
     admin_password: admin
-    load_executor: jmeter           # jmeter and locust are supported. jmeter by default.
+    load_executor: locust           # jmeter and locust are supported. jmeter by default.
     concurrency: 200                # number of concurrent virtual users for jmeter or locust scenario
     test_duration: 45m
     ramp-up: 5m                     # time to spin all concurrent users
@@ -19,7 +19,7 @@ settings:
     WEBDRIVER_VISIBLE: False
     JMETER_VERSION: 5.2.1
     LANGUAGE: en_US.utf8
-    allow_analytics: Yes            # Allow sending basic run analytics to Atlassian. These analytics help us to understand how the tool is being used and help us to continue to invest in this tooling. For more details please see our README.
+    allow_analytics: No            # Allow sending basic run analytics to Atlassian. These analytics help us to understand how the tool is being used and help us to continue to invest in this tooling. For more details please see our README.
     # Action percentage for JMeter and Locust load executors
     view_page: 46
     view_dashboard: 8
@@ -31,9 +31,8 @@ settings:
     view_attachment: 4
     upload_attachment: 5
     like_page: 2
-    #standalone_extension: 46 # 0 = disabled
-    standalone_extension_get_template_list: 5
-    standalone_extension_find_page_by_event_id_found: 5
+    standalone_extension_get_template_list: 4
+    standalone_extension_find_page_by_event_id_found: 6
     standalone_extension_find_page_by_event_id_not_found: 7
     # Custom dataset section.
     custom_dataset_query: title ~ 'MeeticalApp*' # Write CQL query to add CQL output to the app/datasets/confluence/custom_pages.csv, e.g. "title ~ 'AppPage*'"
